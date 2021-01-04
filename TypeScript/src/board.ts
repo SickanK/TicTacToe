@@ -42,6 +42,7 @@ export class Board {
             combinations.push(board.map((val: string[]) => val[i]))
         };
 
+
         return [...combinations, diagonal.left, diagonal.right]
     }
 
