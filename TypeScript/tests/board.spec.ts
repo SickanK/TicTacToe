@@ -41,15 +41,15 @@ describe("Get result of game", () => {
 });
 
 describe("Bot get placement of game-piece", () => {
-    it("should return [0, 1]", () => {
-        let templateBoard = [["O", "X", "#"], ["#", "X", "X"], ["#", "O", "#"]]
+    it("should return [0, 0]", () => {
+        let templateBoard = [["#", "#", "#"], ["#", "X", "#"], ["#", "#", "#"]]
         let board = new Bot(templateBoard);
-        assert.equal(board.nextPlacement().toString(), [0, 1].toString());
+        assert.equal(board.getNextPlacement().toString(), [0, 0].toString());
     });
 
     it("should return [0, 2]", () => {
-        let templateBoard = [["O", "X", "X"], ["O", "X", "X"], ["#", "O", "#"]]
+        let templateBoard = [["O", "#", "3"], ["O", "X", "#"], ["#", "#", "#"]]
         let board = new Bot(templateBoard);
-        assert.equal(board.nextPlacement().toString(), [0, 2].toString());
+        assert.equal(board.getNextPlacement().toString(), [0, 2].toString());
     });
 });
