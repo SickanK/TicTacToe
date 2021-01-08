@@ -101,8 +101,16 @@ impl Board {
         BoardStatus::Undeclared
     }
 
-    pub fn place_game_piece(&mut self, coords: Coordinates, game_piece: GamePiece){
+    pub fn place_game_piece(&mut self, coords: Coordinates, game_piece: GamePiece) -> Result<(), &str> {
+        if !(0..=2).contains(&(coords.0 as u32)) || !(0..=2).contains(&(coords.1 as u32)) {
+            return Err("Number must be between 1 and 3.");
+        } else if self.board[coords.1][coords.0] == GamePiece::X.get_char() ||
+                  self.board[coords.1][coords.0] == GamePiece::O.get_char() {
+            return Err("Tile is occupied.");
+        }
+
         self.board[coords.1][coords.0] = game_piece.get_char();
+        Ok(())
     }
 
     pub fn get_board(&mut self) -> Board2d {
