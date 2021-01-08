@@ -20,11 +20,11 @@ impl Bot {
 }
 
 impl Bot {
-    fn retrieve_empty_tiles(&self) -> Vec<board::Coordinates> {
+    fn retrieve_empty_tiles(&self, &board: &board::Board2d) -> Vec<board::Coordinates> {
         let mut empty_tiles: Vec<board::Coordinates> = Vec::new();
         for y in 0..3 {
-            for (x, tile) in self.board[y].iter().enumerate() {
-                if *tile == '#' { empty_tiles.push((y as usize, x as usize)) };
+            for (x, tile) in board[y].iter().enumerate() {
+                if *tile == '#' { empty_tiles.push((x as usize, y as usize)) };
             }
         }
         empty_tiles 
@@ -32,14 +32,13 @@ impl Bot {
 
     fn minimax(&self, board: &mut board::Board2d, is_maximizing: bool, depth: i32) -> i32 {
         let state: Option<i32> = match board::Board::from(*board).status() {
-            board::BoardStatus::Win => Some(100 - depth), 
-            board::BoardStatus::Lose => Some(-100 + depth),
+            board::BoardStatus::Win => Some(-100 + depth), 
+            board::BoardStatus::Lose => Some(100 - depth),
             board::BoardStatus::Draw => Some(0), 
             board::BoardStatus::Undeclared => None
         };
 
         if let Some(s) = &state {
-            println!("{:?}", s);
             return *s;
         };
 
@@ -47,12 +46,11 @@ impl Bot {
         let mut best_val = if is_maximizing { -100 } else { 100 };
         let player = if is_maximizing { board::GamePiece::O } else { board::GamePiece::X };
         
-        for (x, y) in self.retrieve_empty_tiles() {
+        for (x, y) in self.retrieve_empty_tiles(&board) {
             board[y][x] = player.get_char();
-            println!("{:?}", board);
             let value = self.minimax(board, !is_maximizing, depth+1);
             best_val = if is_maximizing { cmp::max(value, best_val) } else { cmp::min(value, best_val) };
-            //board[y][x] = '#';
+            board[y][x] = '#';
         }
 
         best_val
@@ -62,10 +60,9 @@ impl Bot {
         let mut coords: board::Coordinates = (0, 0);
         let mut best_val = -100;
 
-        for (x, y) in self.retrieve_empty_tiles() {
+        for (x, y) in self.retrieve_empty_tiles(&self.board) {
             self.board[y][x] = 'O';
             let value = self.minimax(&mut Box::new(self.board), false, 0);
-            println!("{}", value);
             self.board[y][x] = '#';
             if best_val < value {
                 coords = (x, y);
